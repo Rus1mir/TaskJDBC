@@ -53,17 +53,17 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void cleanUsersTable() {
-        executeInsideTransaction(em -> em.createNativeQuery("delete from Users").executeUpdate());
+        executeInsideTransaction(session -> session.createNativeQuery("delete from Users").executeUpdate());
     }
 
     private void executeInsideTransaction(Consumer<Session> action) {
-        Transaction tx = null;
+        Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            tx = session.beginTransaction();
+            transaction = session.beginTransaction();
             action.accept(session);
-            tx.commit();
+            transaction.commit();
         } catch (Exception e) {
-            tx.rollback();
+            transaction.rollback();
             e.printStackTrace();
         }
     }
